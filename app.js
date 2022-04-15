@@ -8,7 +8,7 @@ const port = 3000;
 connect();
 
 // 라우터 불러오기
-// const articleRouter = require("./routers/articles");
+const postRouter = require("./routers/posts");
 // const mainPageRouter = require("./routers/mainPages");
 // const myPageRouter = require("./routers/myPages");
 // const userRouter = require("./routers/users");
@@ -37,8 +37,7 @@ app.use(requestMiddleware);
 app.use(express.urlencoded({ extended: false }));
 
 // 라우터 연결
-// app.use("/api", [articleRouter, mainPageRouter, myPageRouter]);
-// app.use("/user", [userRouter]);
+app.use("/api", [postRouter]);
 
 // 서버 열기
 app.listen(port, () => {

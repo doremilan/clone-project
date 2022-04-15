@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const connect = () => {
   mongoose
     .connect(
-      "mongodb+srv://tslee1379:myteambest1379@cluster0.gnxiz.mongodb.net/miniProject?retryWrites=true&w=majority",
+      "mongodb+srv://project:clone@clonecodings.kked2.mongodb.net/clonecodings?retryWrites=true&w=majority",
       { ignoreUndefined: true }
     )
     .catch((err) => {
