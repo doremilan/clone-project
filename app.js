@@ -9,6 +9,8 @@ connect();
 
 // 라우터 불러오기
 const postRouter = require("./routers/posts");
+const userRouter = require("./routers/users");
+const subscribeRouter = require("./routers/subscribe");
 // const mainPageRouter = require("./routers/mainPages");
 // const myPageRouter = require("./routers/myPages");
 // const userRouter = require("./routers/users");
@@ -37,7 +39,7 @@ app.use(requestMiddleware);
 app.use(express.urlencoded({ extended: false }));
 
 // 라우터 연결
-app.use("/api", [postRouter]);
+app.use("/api", [postRouter,userRouter,subscribeRouter]);
 
 // 서버 열기
 app.listen(port, () => {
