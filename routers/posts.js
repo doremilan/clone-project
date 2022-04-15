@@ -2,7 +2,14 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth-middleware");
 const { upload } = require("../middlewares/upload");
-const user = require("../schemas/user");
+const Post = require("../schemas/post");
+const Comment = require("../schemas/Comment");
+const User = require("../schemas/user");
+const Subscribe = require("../schemas/user");
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const myKey = fs.readFileSync(__dirname + "/../middleware/key.txt").toString();
+
 
 // 게시글 조회
 router.get("/posts/:postNum", async (req, res) => {
@@ -118,6 +125,49 @@ router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(400).send({ result: "fail", msg: "게시글 삭제 실패ㅠㅠ" });
+
+
+
+//메인 조회
+router.get("/main", async (req, res) => {
+  try {
+    let posts = await Post.find({}).sort({ postDate: -1 });
+
+    for (let user of posts) {
+      let userInfo = await User.findOne({ userId: user.userId });
+      userInfo.userPw = "";
+      user.userInfo = userInfo;
+    }
+
+    const Token = req.headers.authorization;
+    const logInToken = Token.replace("Bearer", "");
+
+    try {
+      const token = jwt.verify(logInToken, myKey);
+      const userId = token.userId;
+      const userSubIds = await Subscribe.findOne({ userId });
+
+      const userSub = [];
+      for (let userSubId of userSubIds) {
+        const subscribeOne = await Subscribe.findOne({
+          userId: userSubId.userId,
+        });
+        if (subscribeOne === null) {
+          continue;
+        } else {
+          userSub.push(subscribeOne);
+        }
+      }
+
+      res.status(200).json({ posts, userSub });
+    } catch (error) {
+      res.status(200).json({ posts });
+    }
+  } catch (error) {
+    console.log(error);
+    console.log("/api/main에서 에러남");
+
+    res.status(404).json({ result: false });
   }
 });
 
