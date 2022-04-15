@@ -4,7 +4,7 @@ const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
 require("dotenv").config();
 
-let s3 = new AWS.S3();
+const s3 = new AWS.S3();
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLocaleLowerCase();
