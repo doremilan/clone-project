@@ -35,7 +35,6 @@ router.post("/login", async (req, res) => {
     issuer: "CloneProject",
     subject: "userInfo",
   };
-
   const payload = { userId };
   const secret = myKey;
   //jwt.sign()비동기 함수
