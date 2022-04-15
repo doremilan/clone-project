@@ -18,6 +18,7 @@ const userSchema = mongoose.Schema({
   },
   userSubscribe: {
     type: Number,
+    default: 0,
   },
 });
 

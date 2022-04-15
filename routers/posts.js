@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../schemas/post");
 const User = require("../schemas/user");
-const Subscribe = require("../schemas/user");
+const Subscribe = require("../schemas/subscribe");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const myKey = fs.readFileSync(__dirname + "/../middleware/key.txt").toString();
@@ -18,12 +18,11 @@ router.get("/main", async (req, res) => {
     }
 
     const Token = req.headers.authorization;
-    const logInToken = Token.replace("Bearer", "");
-
-    try {
+    if (Token) {
+      const logInToken = Token.replace("Bearer", "");
       const token = jwt.verify(logInToken, myKey);
       const userId = token.userId;
-      const userSubIds = await Subscribe.findOne({ userId });
+      const userSubIds = await Subscribe.find({ userId });
 
       const userSub = [];
       for (let userSubId of userSubIds) {
@@ -36,9 +35,8 @@ router.get("/main", async (req, res) => {
           userSub.push(subscribeOne);
         }
       }
-
       res.status(200).json({ posts, userSub });
-    } catch (error) {
+    } else {
       res.status(200).json({ posts });
     }
   } catch (error) {

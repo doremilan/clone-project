@@ -9,11 +9,11 @@ connect();
 
 // 라우터 불러오기
 const postRouter = require("./routers/posts");
+const likeRouter = require("./routers/likes");
+const searchRouter = require("./routers/search");
+const commentRouter = require("./routers/comments");
 const userRouter = require("./routers/users");
 const subscribeRouter = require("./routers/subscribe");
-// const mainPageRouter = require("./routers/mainPages");
-// const myPageRouter = require("./routers/myPages");
-// const userRouter = require("./routers/users");
 
 // 접속 로그 남기기
 const requestMiddleware = (req, res, next) => {
@@ -39,7 +39,14 @@ app.use(requestMiddleware);
 app.use(express.urlencoded({ extended: false }));
 
 // 라우터 연결
-app.use("/api", [postRouter,userRouter,subscribeRouter]);
+app.use("/api", [
+  postRouter,
+  subscribeRouter,
+  likeRouter,
+  searchRouter,
+  commentRouter,
+]);
+app.use("/user", [userRouter]);
 
 // 서버 열기
 app.listen(port, () => {

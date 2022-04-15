@@ -47,7 +47,7 @@ router.get("/search", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    console.log("/api/main에서 에러남");
+    console.log("/api/search에서 에러남");
 
     res.status(404).json({ result: false });
   }
