@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const authMiddleware = require("../middlewares/auth-middleware");
-const { upload } = require("../middlewares/upload");
 const Post = require("../schemas/post");
 const Comment = require("../schemas/Comment");
 const User = require("../schemas/user");
+const Like = require("../schemas/like");
+const Unlike = require("../schemas/unlike");
 const Subscribe = require("../schemas/user");
+const authMiddleware = require("../middlewares/auth-middleware");
+const { upload } = require("../middlewares/upload");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const myKey = fs.readFileSync(__dirname + "/../middleware/key.txt").toString();
@@ -13,28 +15,64 @@ const myKey = fs.readFileSync(__dirname + "/../middleware/key.txt").toString();
 
 // 게시글 조회
 router.get("/posts/:postNum", async (req, res) => {
-  //postId -> postNum으로 수정..? / 좋아요 싫어요 구독 check시 유저정보 어떻게 구하징..
   try {
     const { postNum } = req.params;
+    await Post.updateOne({ postNum },{$inc: { postCnt: 1 }}); //postCnt 추가
+    const [comments] = await Comment.find({ postNum }); //comment 데이터 구하기(배열)
+    
+    const likes = await Like.find({ postNum });
+    const totalLike = likes.length; //totalLike 데이터 구하기
+    
+    const post = await Post.find({ postNum }); //post 데이터 구하기
+    const userInfo = await User.findOne({ userId: post.userId }); //userInfo 데이터 구하기
 
-    const postDetails = await Post.find({ postNum });
-    postDetails.postCnt + 1; //postCnt 추가
-    await postDetails.save(); //추가한 값 저장
 
-    const postComments = await Comment.find({ postNum });
-    const totalLike = await Like.find({ postNum });
+    const Token = req.headers.authorization;
+    const logInToken = Token.replace("Bearer", "");
 
-    likeCheck;
-    unlikeCheck;
-    subscribeCheck;
+    const token = jwt.verify(logInToken, myKey);
+    const userId = token.userId;
 
-    res
-      .status(200)
-      .json({ result: "true", postDetails, postComments, totalLike });
+    const userLikedId = await Like.findOne({ postNum: postNum, userId: userId });
+    const userUnlikedId = await Unlike.findOne({ postNum: postNum, userId: userId });
+    const userSubId = await Subscribe.findOne({ userId: userId });
+    if (userLikedId) {
+      const likeCheck = true;
+    } else {
+      const likeCheck = false;
+    };
+    if (userUnlikedId) {
+      const unlikeCheck = true;
+    } else {
+      const unlikeCheck = false;
+    }; 
+    if (userSubId) {
+      const subscribeCheck = true;
+    } else {
+      const subscribeCheck = false;
+    };
+  res
+    .status(200)
+    .json({ post, userInfo, comments, totalLike, likeCheck, unlikeCheck, subscribeCheck });
+} catch (error) {
+  res.status(404).send({ result: "false", msg: "게시글 조회 실패ㅠㅠ" });
+}  
+});
+
+
+res.status(200).json({ posts, userSub });
+    } catch (error) {
+      res.status(200).json({ posts });
+    }
   } catch (error) {
-    res.status(404).send({ result: "false", msg: "게시글 조회 실패ㅠㅠ" });
+    console.log(error);
+    console.log("/api/main에서 에러남");
+
+    res.status(404).json({ result: false });
   }
 });
+
+
 
 // 게시글 작성
 router.post(
@@ -46,11 +84,11 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      const { user } = res.locals;
+      const { userId } = res.locals.user;
       const { postTitle, postDesc } = req.body;
       const postVideo = req.files.videoFile.location;
       const postThumb = req.files.imageFile.location;
-      const postDate = new Date(+new Date() + 3240 * 10000)
+      const postDate = new Date(+new Date() + 3240 * 10000) //형식 확인 필요
         .toISOString()
         .replace("T", " ")
         .replace(/\..*/, "");
@@ -61,7 +99,7 @@ router.post(
         const postSorted = postAmount.sort((a, b) => b.postNum - a.postNum);
         const MaxPostNum = postSorted[0]["postId"];
         const postNum = MaxPostNum + 1;
-        // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..?
+        // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..? (확인필요)
         // const postCnt = 0;
         // const postLikeNum = 0;
         // const postUnlikeNum = 0;
@@ -73,12 +111,11 @@ router.post(
           postVideo,
           postThumb,
           postDate,
-          userInfo: user,
-          userId: user.userId,
+          userId,
         });
       } else {
         const postNum = 1;
-        // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..?
+        // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..? (확인필요)
         // const postCnt = 0;
         // const postLikeNum = 0;
         // const postUnlikeNum = 0;
@@ -89,8 +126,7 @@ router.post(
           postVideo,
           postThumb,
           postDate,
-          userInfo: user,
-          userId: user.userId, //userInfo는 리스폰스만,, 디비저장 놉
+          userId, 
         });
       }
       res.status(201).send({ result: "true", msg: "등록 완료!!" });
