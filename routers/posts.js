@@ -40,32 +40,33 @@ router.get("/posts/:postNum", async (req, res) => {
       userId: userId,
     });
     const userSubId = await Subscribe.findOne({ userId: userId });
+
     if (userLikedId) {
       const likeCheck = true;
     } else {
       const likeCheck = false;
     }
+
     if (userUnlikedId) {
       const unlikeCheck = true;
     } else {
       const unlikeCheck = false;
     }
+
     if (userSubId) {
       const subscribeCheck = true;
     } else {
       const subscribeCheck = false;
     }
-    res
-      .status(200)
-      .json({
-        post,
-        userInfo,
-        comments,
-        totalLike,
-        likeCheck,
-        unlikeCheck,
-        subscribeCheck,
-      });
+    res.status(200).json({
+      post,
+      userInfo,
+      comments,
+      totalLike,
+      likeCheck,
+      unlikeCheck,
+      subscribeCheck,
+    });
   } catch (error) {
     res.status(404).send({ result: "false", msg: "게시글 조회 실패ㅠㅠ" });
   }
