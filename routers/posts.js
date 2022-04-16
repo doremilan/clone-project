@@ -112,8 +112,9 @@ router.post(
 
       if (postAmount.length) {
         const postSorted = postAmount.sort((a, b) => b.postNum - a.postNum);
-        const MaxPostNum = postSorted[0]["postId"];
+        const MaxPostNum = postSorted[0]["postNum"];
         const postNum = MaxPostNum + 1;
+        console.log("포스트넘:", postNum);
         // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..? (확인필요)
         // const postCnt = 0;
         // const postLikeNum = 0;
@@ -130,6 +131,7 @@ router.post(
         });
       } else {
         const postNum = 1;
+        console.log("포스트넘2:", postNum);
         // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..? (확인필요)
         // const postCnt = 0;
         // const postLikeNum = 0;
@@ -165,7 +167,7 @@ router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
           .status(400)
           .send({ result: "false", msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
-        await deleteS3(existPost);
+        deleteS3(existPost);
         await Comment.deleteMany({ postNum });
         await Like.deleteMany({ postNum });
         await Unlike.deleteMany({ postNum });
@@ -180,25 +182,35 @@ router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
 });
 
 //게시글 수정
-router.put("/posts/:postNum", authMiddleware, async (req, res) => {
-  try {
-    const { postNum } = req.params;
-    const { postTitle, postDesc } = req.body;
-    const postThumb = req.files.imageFile[0].location;
-    const existPost = await Post.find({ postNum: Number(postNum) });
-    if (existPost) {
-      await Post.updateOne(
-        { postNum: Number(postNum) },
-        { $set: { postTitle, postDesc, postThumb } }
-      );
-      await deleteS3(existPost);
-      return res.status(200).send({ result: "true", msg: "수정 완료!!" });
+router.put(
+  "/posts",
+  upload.fields([
+    { name: "videoFile", maxCount: 1 },
+    { name: "imageFile", maxCount: 1 },
+  ]),
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { postNum } = req.query;
+      const { postTitle, postDesc } = req.body;
+      const postThumb = req.files.imageFile[0].location;
+      const postVideo = req.files.videoFile[0].location;
+      const existPost = await Post.find({ postNum: Number(postNum) });
+      if (existPost) {
+        await Post.updateOne(
+          { postNum: Number(postNum) },
+          { $set: { postTitle, postDesc, postThumb, postVideo } }
+        );
+        deleteS3(existPost);
+        return res.status(200).send({ result: "true", msg: "수정 완료!!" });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(400).send({ result: "fail", msg: "게시글 수정 실패ㅠㅠ" });
+      console.log("/api/posts/:postNum에서 에러남");
     }
-  } catch (err) {
-    res.status(400).send({ result: "fail", msg: "게시글 수정 실패ㅠㅠ" });
-    console.log("/api/posts/:postNum에서 에러남");
   }
-});
+);
 
 //메인 조회
 router.get("/main", async (req, res) => {
