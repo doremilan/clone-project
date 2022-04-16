@@ -179,6 +179,27 @@ router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
   }
 });
 
+//게시글 수정
+router.put("/posts/:postNum", authMiddleware, async (req, res) => {
+  try {
+    const { postNum } = req.params;
+    const { postTitle, postDesc } = req.body;
+    const postThumb = req.files.imageFile[0].location;
+    const existPost = await Post.find({ postNum: Number(postNum) });
+    if (existPost) {
+      await Post.updateOne(
+        { postNum: Number(postNum) },
+        { $set: { postTitle, postDesc, postThumb } }
+      );
+      await deleteS3(existPost);
+      return res.status(200).send({ result: "true", msg: "수정 완료!!" });
+    }
+  } catch (err) {
+    res.status(400).send({ result: "fail", msg: "게시글 수정 실패ㅠㅠ" });
+    console.log("/api/posts/:postNum에서 에러남");
+  }
+});
+
 //메인 조회
 router.get("/main", async (req, res) => {
   try {

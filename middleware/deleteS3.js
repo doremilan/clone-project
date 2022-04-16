@@ -1,8 +1,8 @@
 const AWS = require("aws-sdk");
 
 module.exports = (post) => {
-  const uri1 = post.imageUrl.split("/").slice(-1);
-  const uri2 = post.videoUrl.split("/").slice(-1);
+  const uri1 = post.postThumb.split("/").slice(-1);
+  const uri2 = post.postVideo.split("/").slice(-1);
   const key1 = "images/" + decodeURI(uri1);
   const key2 = "videos/" + decodeURI(uri2);
 
