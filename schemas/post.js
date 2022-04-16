@@ -9,6 +9,11 @@ const postSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  //추가
+  postTitle: {
+    type: String,
+    required: true,
+  },
   postThumb: {
     type: String,
     required: true,
@@ -17,22 +22,16 @@ const postSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  //default값 추가
   postLikeNum: {
     type: Number,
-    required: true,
     default: 0,
   },
-  //default값 추가
   postUnlikeNum: {
     type: Number,
-    required: true,
     default: 0,
   },
-  //default값 추가
   postCommentNum: {
     type: Number,
-    required: true,
     default: 0,
   },
   userId: {
@@ -47,10 +46,9 @@ const postSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  //추가 (default값 지정)
+  //추가
   postCnt: {
     type: String,
-    required: true,
     default: 0,
   },
 });
