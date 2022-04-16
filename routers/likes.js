@@ -31,10 +31,10 @@ router.post("/like", authMiddleware, async (req, res) => {
 // 싫어요
 router.post("/unlike", authMiddleware, async (req, res) => {
   try {
-    const { postNum, likeCheck } = req.body;
+    const { postNum, unlikeCheck } = req.body;
     const { userId } = res.locals.user;
 
-    if (likeCheck) {
+    if (unlikeCheck) {
       await Post.updateOne({ postNum }, { $inc: { postUnlikeNum: -1 } });
       await Unlike.deleteOne({ postNum, userId });
     } else {

@@ -7,7 +7,7 @@ const Comment = require("../schemas/comment");
 const User = require("../schemas/user");
 const Like = require("../schemas/like");
 const Unlike = require("../schemas/unlike");
-const Subscribe = require("../schemas/user");
+const Subscribe = require("../schemas/subscribe");
 
 // MiddleWares
 const authMiddleware = require("../middleware/authMiddleWare");
@@ -21,23 +21,36 @@ const fs = require("fs");
 const myKey = fs.readFileSync(__dirname + "/../middleware/key.txt").toString();
 
 // 게시글 조회
-router.get("/posts/:postNum", async (req, res) => {
+router.get("/posts", async (req, res) => {
   try {
-    const { postNum } = req.params;
+    const { postNum } = req.query;
     await Post.updateOne({ postNum }, { $inc: { postCnt: 1 } }); //postCnt 추가
-    const [comments] = await Comment.find({ postNum }); //comment 데이터 구하기(배열)
+    const comments = await Comment.find({ postNum }); //comment 데이터 구하기(배열)
 
-    const likes = await Like.find({ postNum });
-    const totalLike = likes.length; //totalLike 데이터 구하기
+    for (let user of comments) {
+      let userInfo = await User.findOne({
+        userId: user.userId,
+      });
+      userInfo.userPw = "";
+      user.userInfo = userInfo;
+    }
 
-    const post = await Post.find({ postNum }); //post 데이터 구하기
+    const [post] = await Post.find({ postNum }); //post 데이터 구하기
     const userInfo = await User.findOne({ userId: post.userId }); //userInfo 데이터 구하기
+    post.userInfo = userInfo;
 
     const Token = req.headers.authorization;
-    const logInToken = Token.replace("Bearer", "");
-    const token = jwt.verify(logInToken, myKey);
-    const userId = token.userId;
 
+    let userId;
+    if (Token) {
+      const logInToken = Token.replace("Bearer", "");
+      const token = jwt.verify(logInToken, myKey);
+      userId = token.userId;
+    }
+
+    let likeCheck = false;
+    let unlikeCheck = false;
+    let subscribeCheck = false;
     if (userId) {
       const userLikedId = await Like.findOne({
         postNum: Number(postNum),
@@ -47,38 +60,32 @@ router.get("/posts/:postNum", async (req, res) => {
         postNum: Number(postNum),
         userId: userId,
       });
-      const userSubId = await Subscribe.findOne({ userId: userId });
+      const userSubId = await Subscribe.findOne({
+        userSub: post.userId,
+        userId: userId,
+      });
+
+      if (userLikedId) {
+        likeCheck = true;
+      }
+      if (userUnlikedId) {
+        unlikeCheck = true;
+      }
+      if (userSubId) {
+        subscribeCheck = true;
+      }
     }
 
-    if (userLikedId) {
-      const likeCheck = true;
-    } else {
-      const likeCheck = false;
-    }
-
-    if (userUnlikedId) {
-      const unlikeCheck = true;
-    } else {
-      const unlikeCheck = false;
-    }
-
-    if (userSubId) {
-      const subscribeCheck = true;
-    } else {
-      const subscribeCheck = false;
-    }
     res.status(200).json({
       post,
-      userInfo,
       comments,
-      totalLike,
       likeCheck,
       unlikeCheck,
       subscribeCheck,
     });
   } catch (error) {
+    console.log("/api/posts 게시글 조회에서 에러남");
     res.status(404).send({ result: "false", msg: "게시글 조회 실패ㅠㅠ" });
-    console.log("/api/posts/:postNum에서 에러남");
   }
 });
 
@@ -141,7 +148,7 @@ router.post(
     } catch (error) {
       console.log(error);
       res.status(400).send({ result: "false", msg: "등록 실패ㅠㅠ" });
-      console.log("/api/posts에서 에러남");
+      console.log("/api/posts 게시글 작성에서 에러남");
     }
   }
 );
@@ -168,7 +175,7 @@ router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
     res.status(400).send({ result: "fail", msg: "게시글 삭제 실패ㅠㅠ" });
   } catch (err) {
     res.status(400).send({ result: "fail", msg: "게시글 삭제 실패ㅠㅠ" });
-    console.log("/api/posts에서 에러남");
+    console.log("/api/posts 게시글 삭제에서 에러남");
   }
 });
 
@@ -192,12 +199,13 @@ router.get("/main", async (req, res) => {
 
       const userSub = [];
       for (let userSubId of userSubIds) {
-        const subscribeOne = await Subscribe.findOne({
+        let subscribeOne = await Subscribe.findOne({
           userId: userSubId.userId,
         });
         if (subscribeOne === null) {
           continue;
         } else {
+          subscribeOne = await User.findOne({ userId: subscribeOne.userSub });
           userSub.push(subscribeOne);
         }
       }

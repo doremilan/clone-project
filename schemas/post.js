@@ -48,7 +48,7 @@ const postSchema = mongoose.Schema({
   },
   //추가
   postCnt: {
-    type: String,
+    type: Number,
     default: 0,
   },
 });
