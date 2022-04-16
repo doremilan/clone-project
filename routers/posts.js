@@ -15,6 +15,9 @@ const { upload } = require("../middleware/upload");
 
 // delete obj in S3 module
 const deleteS3 = require("../middleware/deleteS3");
+const AWS = require("aws-sdk");
+require("dotenv").config();
+const s3 = new AWS.S3();
 
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
@@ -107,6 +110,7 @@ router.post(
         .toISOString()
         .replace("T", " ")
         .replace(/\..*/, "");
+      console.log(postDate);
 
       const postAmount = await Post.find();
 
@@ -114,12 +118,6 @@ router.post(
         const postSorted = postAmount.sort((a, b) => b.postNum - a.postNum);
         const MaxPostNum = postSorted[0]["postNum"];
         const postNum = MaxPostNum + 1;
-        console.log("포스트넘:", postNum);
-        // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..? (확인필요)
-        // const postCnt = 0;
-        // const postLikeNum = 0;
-        // const postUnlikeNum = 0;
-
         const createdPost = await Post.create({
           postNum,
           postTitle,
@@ -131,11 +129,6 @@ router.post(
         });
       } else {
         const postNum = 1;
-        console.log("포스트넘2:", postNum);
-        // const postCommentNum = 0; //required 지우고 default 값 지정해놓으면 안써도 될까..? (확인필요)
-        // const postCnt = 0;
-        // const postLikeNum = 0;
-        // const postUnlikeNum = 0;
         const createdPost = await Post.create({
           postNum,
           postTitle,
@@ -156,11 +149,11 @@ router.post(
 );
 
 //게시글 삭제
-router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
+router.delete("/posts", authMiddleware, async (req, res) => {
   try {
     const { user } = res.locals;
-    const { postNum } = req.params;
-    const existPost = await Post.findOne({ postNum: Number(postNum) });
+    const { postNum } = req.query;
+    const existPost = await Post.findOne({ postNum });
     if (existPost) {
       if (existPost.userId !== user.userId) {
         return res
@@ -168,6 +161,7 @@ router.delete("/posts/:postNum", authMiddleware, async (req, res) => {
           .send({ result: "false", msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
         deleteS3(existPost);
+        await Post.deleteOne({ postNum: Number(postNum) });
         await Comment.deleteMany({ postNum });
         await Like.deleteMany({ postNum });
         await Unlike.deleteMany({ postNum });
@@ -201,7 +195,20 @@ router.put(
           { postNum: Number(postNum) },
           { $set: { postTitle, postDesc, postThumb, postVideo } }
         );
-        deleteS3(existPost);
+        const delImage = existPost[0].postThumb.split("/").slice(-1);
+        const key = decodeURI(delImage);
+        console.log(key);
+        s3.deleteObject(
+          {
+            Bucket: "doremilanbucket",
+            Key: `images/${key}`,
+          },
+          (err, data) => {
+            if (err) {
+              throw err;
+            }
+          }
+        );
         return res.status(200).send({ result: "true", msg: "수정 완료!!" });
       }
     } catch (err) {
