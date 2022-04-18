@@ -107,9 +107,9 @@ router.post(
       const postVideo = req.files.videoFile[0].location;
       const postThumb = req.files.imageFile[0].location;
       const postDate = new Date(+new Date() + 3240 * 10000) //형식 확인 필요
-        .toISOString()
-        .replace("T", " ")
-        .replace(/\..*/, "");
+//         .toISOString()
+//         .replace("T", " ")
+//         .replace(/\..*/, "");
       console.log(postDate);
 
       const postAmount = await Post.find();
