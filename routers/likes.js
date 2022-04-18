@@ -9,7 +9,7 @@ const Unlike = require("../schemas/unlike");
 router.post("/like", authMiddleware, async (req, res) => {
   try {
     const { postNum } = req.query;
-    const { likeCheck } = req.body;
+    const { likeCheck, unlikeCheck } = req.body;
     const { userId } = res.locals.user;
 
     if (likeCheck) {
@@ -18,6 +18,10 @@ router.post("/like", authMiddleware, async (req, res) => {
     } else {
       await Post.updateOne({ postNum }, { $inc: { postLikeNum: 1 } });
       await Like.create({ postNum, userId });
+      if (unlikeCheck) {
+        await Post.updateOne({ postNum }, { $inc: { postUnlikeNum: -1 } });
+        await Unlike.deleteOne({ postNum, userId });
+      }
     }
 
     res.status(200).json({ result: true });
@@ -33,7 +37,7 @@ router.post("/like", authMiddleware, async (req, res) => {
 router.post("/unlike", authMiddleware, async (req, res) => {
   try {
     const { postNum } = req.query;
-    const { unlikeCheck } = req.body;
+    const { likeCheck, unlikeCheck } = req.body;
     const { userId } = res.locals.user;
 
     if (unlikeCheck) {
@@ -42,6 +46,10 @@ router.post("/unlike", authMiddleware, async (req, res) => {
     } else {
       await Post.updateOne({ postNum }, { $inc: { postUnlikeNum: 1 } });
       await Unlike.create({ postNum, userId });
+      if (likeCheck) {
+        await Post.updateOne({ postNum }, { $inc: { postLikeNum: -1 } });
+        await Like.deleteOne({ postNum, userId });
+      }
     }
 
     res.status(200).json({ result: true });
