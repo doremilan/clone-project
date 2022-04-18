@@ -98,8 +98,12 @@ router.post(
     try {
       const { userId } = res.locals.user;
       const { postTitle, postDesc } = req.body;
+      console.log("1",postVideo)
+      console.log("2",postThumb)
       const postVideo = req.files.videoFile[0].location;
       const postThumb = req.files.imageFile[0].location;
+      console.log("1",postVideo)
+      console.log("2",postThumb)
       const postDate = new Date();
 
       const postAmount = await Post.find();
