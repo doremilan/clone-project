@@ -12,7 +12,7 @@
 //   const s3 = new AWS.S3();
 
 //   const params = {
-//     Bucket: "doremilanbucket",
+//     Bucket: "lmlbucket",
 //     Delete: {
 //       Objects: [{ Key: key1 }, { Key: key2 }],
 //       Quiet: false,

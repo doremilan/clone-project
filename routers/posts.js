@@ -88,7 +88,7 @@ router.get("/posts", async (req, res) => {
     });
   } catch (error) {
     console.log("/api/posts 게시글 조회에서 에러남");
-    res.status(404).send({ result: "false", msg: "게시글 조회 실패ㅠㅠ" });
+    res.status(404).send({ result: false, msg: "게시글 조회 실패ㅠㅠ" });
   }
 });
 
@@ -106,10 +106,7 @@ router.post(
       const { postTitle, postDesc } = req.body;
       const postVideo = req.files.videoFile[0].location;
       const postThumb = req.files.imageFile[0].location;
-      const postDate = new Date(+new Date() + 3240 * 10000) //형식 확인 필요
-//         .toISOString()
-//         .replace("T", " ")
-//         .replace(/\..*/, "");
+      const postDate = new Date();
       console.log(postDate);
 
       const postAmount = await Post.find();
@@ -139,10 +136,10 @@ router.post(
           userId,
         });
       }
-      res.status(201).send({ result: "true", msg: "등록 완료!!" });
+      res.status(201).send({ result: true, msg: "등록 완료!!" });
     } catch (error) {
       console.log(error);
-      res.status(400).send({ result: "false", msg: "등록 실패ㅠㅠ" });
+      res.status(400).send({ result: false, msg: "등록 실패ㅠㅠ" });
       console.log("/api/posts 게시글 작성에서 에러남");
     }
   }
@@ -158,14 +155,14 @@ router.delete("/posts", authMiddleware, async (req, res) => {
       if (existPost.userId !== user.userId) {
         return res
           .status(400)
-          .send({ result: "false", msg: "게시글 작성자만 삭제할 수 있어요!" });
+          .send({ result: false, msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
         // deleteS3(existPost);
         await Post.deleteOne({ postNum: Number(postNum) });
         await Comment.deleteMany({ postNum });
         await Like.deleteMany({ postNum });
         await Unlike.deleteMany({ postNum });
-        return res.send({ result: "true", msg: "삭제 완료!!" });
+        res.send({ result: true, msg: "삭제 완료!!" });
       }
     }
     // res.status(404).json({ result: false, msg: "게시글 삭제 실패ㅠㅠ" });
@@ -196,13 +193,13 @@ router.put(
           { postNum: Number(postNum) },
           { $set: { postTitle, postDesc, postThumb, postVideo } }
         );
+        // console.log(existPost[0]);
         // const delImage = existPost[0].postThumb.split("/").slice(-1);
-        // const key = decodeURI(delImage);
-        // console.log(key);
+        // console.log(delImage);
         // s3.deleteObject(
         //   {
-        //     Bucket: "doremilanbucket",
-        //     Key: `images/${key}`,
+        //     Bucket: "lmlbucket",
+        //     Key: `images/${delImage}`,
         //   },
         //   (err, data) => {
         //     if (err) {
@@ -210,11 +207,11 @@ router.put(
         //     }
         //   }
         // );
-        return res.status(200).send({ result: "true", msg: "수정 완료!!" });
+        return res.status(200).send({ result: true, msg: "수정 완료!!" });
       }
     } catch (err) {
       console.log(err);
-      res.status(400).send({ result: "fail", msg: "게시글 수정 실패ㅠㅠ" });
+      res.status(400).send({ result: fail, msg: "게시글 수정 실패ㅠㅠ" });
       console.log("/api/posts/:postNum에서 에러남");
     }
   }
