@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const myKey = fs.readFileSync(__dirname + "/../middleware/key.txt").toString();
 
+// 검색
 router.get("/search", async (req, res) => {
   try {
     const { keyword } = req.query;
@@ -47,9 +48,9 @@ router.get("/search", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    console.log("/api/search에서 에러남");
+    console.log("search.js 검색에서 에러남");
 
-    res.status(404).json({ result: false });
+    res.status(400).json({ result: false });
   }
 });
 

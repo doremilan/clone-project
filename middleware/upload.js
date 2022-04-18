@@ -4,7 +4,11 @@ const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
 require("dotenv").config();
 
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({
+  accessKeyId: process.env.ACCESSKEYID,
+  secretAccessKey: process.env.SECRETACCESSKEY,
+  region: process.env.REGION,
+});
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLocaleLowerCase();
@@ -28,7 +32,7 @@ const fileFilter = (req, file, cb) => {
 
 const storage = multerS3({
   s3: s3,
-  bucket: "doremilanbucket",
+  bucket: "clonecoding",
   contentType: multerS3.AUTO_CONTENT_TYPE,
   acl: "public-read",
   metadata: function (req, file, cb) {

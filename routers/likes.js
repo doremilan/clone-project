@@ -27,7 +27,7 @@ router.post("/like", authMiddleware, async (req, res) => {
     res.status(200).json({ result: true });
   } catch (error) {
     console.log(error);
-    console.log("likes.js -> 좋아요에서 에러남");
+    console.log("likes.js 좋아요에서 에러남");
 
     res.status(400).json({ result: false });
   }
@@ -55,7 +55,7 @@ router.post("/unlike", authMiddleware, async (req, res) => {
     res.status(200).json({ result: true });
   } catch (error) {
     console.log(error);
-    console.log("likes.js -> 싫어요에서 에러남");
+    console.log("likes.js 싫어요에서 에러남");
 
     res.status(400).json({ result: false });
   }

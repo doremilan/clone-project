@@ -35,7 +35,7 @@ router.post("/comments", authMiddleware, async (req, res) => {
     res.status(200).json({ result: true });
   } catch (error) {
     console.log(error);
-    console.log("comments.js -> 댓글 작성에서 에러남");
+    console.log("comments.js 댓글 작성에서 에러남");
 
     res.status(400).json({ result: false });
   }
@@ -52,7 +52,7 @@ router.put("/comments", authMiddleware, async (req, res) => {
     res.status(200).json({ result: true });
   } catch (error) {
     console.log(error);
-    console.log("comments.js -> 댓글 수정에서 에러남");
+    console.log("comments.js 댓글 수정에서 에러남");
 
     res.status(400).json({ result: false });
   }
@@ -74,7 +74,7 @@ router.delete("/comments", authMiddleware, async (req, res) => {
     res.status(200).json({ result: true });
   } catch (error) {
     console.log(error);
-    console.log("comments.js -> 댓글 삭제에서 에러남");
+    console.log("comments.js 댓글 삭제에서 에러남");
 
     res.status(400).json({ result: false });
   }
