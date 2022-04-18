@@ -160,7 +160,7 @@ router.delete("/posts", authMiddleware, async (req, res) => {
           .status(400)
           .send({ result: "false", msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
-        deleteS3(existPost);
+        // deleteS3(existPost);
         await Post.deleteOne({ postNum: Number(postNum) });
         await Comment.deleteMany({ postNum });
         await Like.deleteMany({ postNum });
@@ -195,20 +195,20 @@ router.put(
           { postNum: Number(postNum) },
           { $set: { postTitle, postDesc, postThumb, postVideo } }
         );
-        const delImage = existPost[0].postThumb.split("/").slice(-1);
-        const key = decodeURI(delImage);
-        console.log(key);
-        s3.deleteObject(
-          {
-            Bucket: "doremilanbucket",
-            Key: `images/${key}`,
-          },
-          (err, data) => {
-            if (err) {
-              throw err;
-            }
-          }
-        );
+        // const delImage = existPost[0].postThumb.split("/").slice(-1);
+        // const key = decodeURI(delImage);
+        // console.log(key);
+        // s3.deleteObject(
+        //   {
+        //     Bucket: "doremilanbucket",
+        //     Key: `images/${key}`,
+        //   },
+        //   (err, data) => {
+        //     if (err) {
+        //       throw err;
+        //     }
+        //   }
+        // );
         return res.status(200).send({ result: "true", msg: "수정 완료!!" });
       }
     } catch (err) {
