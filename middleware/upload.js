@@ -12,7 +12,6 @@ const s3 = new AWS.S3({
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLocaleLowerCase();
-  console.log("여기까지 오나??")
   if (file.fieldname === "postVideo") {
     if (ext !== ".mp4")
       cb({ message: "비디오 파일 형식이 맞지 않습니다." }, false);
@@ -41,8 +40,6 @@ const storage = multerS3({
     cb(null, { fieldName: file.fieldname });
   },
   key(req, file, cb) {
-    console.log(file)
-    console.log(req.file)
     if (file.fieldname === "postVideo")
       cb(null, `videos/${Date.now()}${path.basename(file.originalname)}`);
     if (file.fieldname === "postThumb")

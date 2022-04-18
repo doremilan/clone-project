@@ -98,7 +98,6 @@ router.post(
     try {
       const { userId } = res.locals.user;
       const { postTitle, postDesc } = req.body;
-      console.log(req.body)
       
       const postVideo = req.files.postVideo[0].location;
       const postThumb = req.files.postThumb[0].location;
