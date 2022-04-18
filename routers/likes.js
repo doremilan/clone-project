@@ -8,7 +8,8 @@ const Unlike = require("../schemas/unlike");
 // 좋아요
 router.post("/like", authMiddleware, async (req, res) => {
   try {
-    const { postNum, likeCheck } = req.body;
+    const { postNum } = req.query;
+    const { likeCheck } = req.body;
     const { userId } = res.locals.user;
 
     if (likeCheck) {
@@ -31,7 +32,8 @@ router.post("/like", authMiddleware, async (req, res) => {
 // 싫어요
 router.post("/unlike", authMiddleware, async (req, res) => {
   try {
-    const { postNum, unlikeCheck } = req.body;
+    const { postNum } = req.query;
+    const { unlikeCheck } = req.body;
     const { userId } = res.locals.user;
 
     if (unlikeCheck) {

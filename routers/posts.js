@@ -161,16 +161,17 @@ router.delete("/posts", authMiddleware, async (req, res) => {
           .send({ result: "false", msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
         deleteS3(existPost);
-        await Post.deleteOne({ postNum: Number(postNum) });
-        await Comment.deleteMany({ postNum });
-        await Like.deleteMany({ postNum });
-        await Unlike.deleteMany({ postNum });
-        return res.send({ result: "true", msg: "삭제 완료!!" });
+        // await Post.deleteOne({ postNum: Number(postNum) });
+        // await Comment.deleteMany({ postNum });
+        // await Like.deleteMany({ postNum });
+        // await Unlike.deleteMany({ postNum });
+        res.status(200).json({ result: "true", msg: "삭제 완료!!" });
       }
     }
-    res.status(400).send({ result: "fail", msg: "게시글 삭제 실패ㅠㅠ" });
+    // res.status(404).json({ result: false, msg: "게시글 삭제 실패ㅠㅠ" });
   } catch (err) {
-    res.status(400).send({ result: "fail", msg: "게시글 삭제 실패ㅠㅠ" });
+    res.status(404).json({ result: false, msg: "게시글 삭제 실패ㅠㅠ" });
+    console.log(err);
     console.log("/api/posts 게시글 삭제에서 에러남");
   }
 });
