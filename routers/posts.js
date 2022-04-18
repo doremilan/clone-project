@@ -148,7 +148,7 @@ router.delete("/posts", authMiddleware, async (req, res) => {
       if (existPost.userId !== user.userId) {
         return res
           .status(400)
-          .send({ result: "false", msg: "게시글 작성자만 삭제할 수 있어요!" });
+          .send({ result: false, msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
         deleteS3(existPost);
         await Post.deleteOne({ postNum: Number(postNum) });
