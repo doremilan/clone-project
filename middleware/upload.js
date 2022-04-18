@@ -13,11 +13,12 @@ const s3 = new AWS.S3({
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLocaleLowerCase();
   console.log("여기까지 오나??")
-  if (file.fieldname === "videoFile") {
+  if (file.fieldname === "postVideo") {
     if (ext !== ".mp4")
       cb({ message: "비디오 파일 형식이 맞지 않습니다." }, false);
     else cb(null, true);
-  } else if (file.fieldname === "imageFile") {
+  }
+   else if (file.fieldname === "postThumb") {
     if (
       ext !== ".png" &&
       ext !== ".jpg" &&
@@ -42,9 +43,9 @@ const storage = multerS3({
   key(req, file, cb) {
     console.log(file)
     console.log(req.file)
-    if (file.fieldname === "videoFile")
+    if (file.fieldname === "postVideo")
       cb(null, `videos/${Date.now()}${path.basename(file.originalname)}`);
-    if (file.fieldname === "imageFile")
+    if (file.fieldname === "postThumb")
       cb(null, `images/${Date.now()}${path.basename(file.originalname)}`);
   },
 });

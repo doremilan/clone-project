@@ -91,8 +91,8 @@ router.post(
   "/posts",
   authMiddleware,
   upload.fields([
-    { name: "videoFile", maxCount: 1 },
-    { name: "imageFile", maxCount: 1 },
+    { name: "postVideo", maxCount: 1 },
+    { name: "postThumb", maxCount: 1 },
   ]),
   async (req, res) => {
     try {
@@ -100,8 +100,8 @@ router.post(
       const { postTitle, postDesc } = req.body;
       console.log(req.body)
       
-      const postVideo = req.files.videoFile[0].location;
-      const postThumb = req.files.imageFile[0].location;
+      const postVideo = req.files.postVideo[0].location;
+      const postThumb = req.files.postThumb[0].location;
       
       const postDate = new Date();
 
@@ -172,16 +172,16 @@ router.delete("/posts", authMiddleware, async (req, res) => {
 router.put(
   "/posts",
   upload.fields([
-    { name: "videoFile", maxCount: 1 },
-    { name: "imageFile", maxCount: 1 },
+    { name: "postVideo", maxCount: 1 },
+    { name: "postThumb", maxCount: 1 },
   ]),
   authMiddleware,
   async (req, res) => {
     try {
       const { postNum } = req.query;
       const { postTitle, postDesc } = req.body;
-      const postThumb = req.files.imageFile[0].location;
-      const postVideo = req.files.videoFile[0].location;
+      const postThumb = req.files.postThumb[0].location;
+      const postVideo = req.files.postVideo[0].location;
       const existPost = await Post.find({ postNum: Number(postNum) });
       if (existPost) {
         await Post.updateOne(
