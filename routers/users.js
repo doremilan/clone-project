@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ userId, userPw });
 
     if (!user) {
-      res.send(400).send({
+      res.status(400).json({
         errorMessage: "아이디 비밀번호를 확인해주세요.",
       });
       return;
