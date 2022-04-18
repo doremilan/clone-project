@@ -102,7 +102,6 @@ router.post(
       
       const postVideo = req.files.videoFile[0].location;
       const postThumb = req.files.imageFile[0].location;
-      console.log(req.body)
       
       const postDate = new Date();
 
