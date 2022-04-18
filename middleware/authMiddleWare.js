@@ -6,7 +6,7 @@ const myKey = fs.readFileSync(__dirname + "/key.txt").toString();
 module.exports = (req, res, next) => {
   const Token = req.headers.authorization;
   const logInToken = Token.replace("Bearer", "");
-
+  console.log(Token,logInToken)
   try {
     const token = jwt.verify(logInToken, myKey);
     const userId = token.userId;
@@ -21,6 +21,7 @@ module.exports = (req, res, next) => {
         next();
       });
   } catch (error) {
+    console.log(error)
     console.log("여기서 에러난거같음");
     res.status(401).json({ result: "토큰이 유효하지 않습니다." });
     return;
