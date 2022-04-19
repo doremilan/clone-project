@@ -5,7 +5,6 @@ const myKey = fs.readFileSync(__dirname + "/key.txt").toString();
 
 module.exports = (req, res, next) => {
   const Token = req.headers.authorization;
-  console.log(Token)
   const logInToken = Token.replace("Bearer", "");
   try {
     const token = jwt.verify(logInToken, myKey);
