@@ -14,7 +14,7 @@ router.post("/comments", authMiddleware, async (req, res) => {
     const { userId } = res.locals.user;
 
     const maxCommentNumber = await Comment.findOne().sort("-commentNum");
-
+    console.log(contents, postNum,userId)
     let commentNum = 1;
     if (maxCommentNumber) {
       commentNum = maxCommentNumber.commentNum + 1;
