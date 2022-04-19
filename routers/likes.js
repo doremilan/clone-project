@@ -15,13 +15,13 @@ router.post("/like", authMiddleware, async (req, res) => {
 
     if (likeCheck) {
       await Post.updateOne({ postNum }, { $inc: { postLikeNum: 1 } });
-      await Like.create({ postNum, userId });
+      await Like.deleteOne({ postNum, userId });
     } else {
       await Post.updateOne({ postNum }, { $inc: { postLikeNum: -1 } });
-      await Like.deleteOne({ postNum, userId });
+      await Like.create({ postNum, userId });
       if (unlikeCheck) {
         await Post.updateOne({ postNum }, { $inc: { postUnlikeNum: 1 } });
-        await Unlike.create({ postNum, userId });
+        await Unlike.deleteOne({ postNum, userId });
       }
     }
 
