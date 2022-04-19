@@ -12,7 +12,7 @@ const Subscribe = require("../schemas/subscribe");
 // MiddleWares
 const authMiddleware = require("../middleware/authMiddleWare");
 const { upload } = require("../middleware/upload");
-const deleteS3 = require('../middleware/deleteS3')
+// const deleteS3 = require('../middleware/deleteS3')
 
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
@@ -153,7 +153,7 @@ router.delete("/posts", authMiddleware, async (req, res) => {
           .status(400)
           .send({ result: false, msg: "게시글 작성자만 삭제할 수 있어요!" });
       } else {
-        deleteS3(existPost);
+        // deleteS3(existPost);
         await Post.deleteOne({ postNum: Number(postNum) });
         await Comment.deleteMany({ postNum });
         await Like.deleteMany({ postNum });
