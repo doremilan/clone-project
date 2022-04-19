@@ -77,4 +77,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+//로그인 체크
+router.get("/islogin", authMiddleware, async (req, res) => {
+  const { user } = res.locals;
+  res.status(200).send({
+    user,
+  });
+});
+
 module.exports = router;
