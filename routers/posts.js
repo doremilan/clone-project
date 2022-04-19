@@ -12,6 +12,7 @@ const Subscribe = require("../schemas/subscribe");
 // MiddleWares
 const authMiddleware = require("../middleware/authMiddleWare");
 const { upload } = require("../middleware/upload");
+const deleteS3 = require('../middleware/deleteS3')
 
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
