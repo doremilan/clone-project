@@ -22,15 +22,15 @@ router.get("/search", async (req, res) => {
       user.userInfo = userInfo;
     }
 
+    const userSub = [];
     const Token = req.headers.authorization;
-    const logInToken = Token.replace("Bearer", "");
+    if (Token) {
+      const logInToken = Token.replace("Bearer", "");
 
-    try {
       const token = jwt.verify(logInToken, myKey);
       const userId = token.userId;
       const userSubIds = await Subscribe.findOne({ userId });
 
-      const userSub = [];
       for (let userSubId of userSubIds) {
         const subscribeOne = await Subscribe.findOne({
           userId: userSubId.userId,
@@ -41,11 +41,9 @@ router.get("/search", async (req, res) => {
           userSub.push(subscribeOne);
         }
       }
-
-      res.status(200).json({ posts, userSub });
-    } catch (error) {
-      res.status(200).json({ posts });
     }
+
+    res.status(200).json({ posts, userSub });
   } catch (error) {
     console.log(error);
     console.log("search.js 검색에서 에러남");
