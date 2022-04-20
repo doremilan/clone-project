@@ -123,7 +123,7 @@ router.post(
         });
       } else {
         const postNum = 1;
-        const createdPost = await Post.create({
+        const [createdPost] = await Post.create({
           postNum,
           postTitle,
           postDesc,
@@ -133,12 +133,14 @@ router.post(
           userId,
         });
       }
+      console.log(createdPost)
       res.status(201).json({
         result:true,
         postTitle,
         postDesc,
         postVideo,
-        postThumb
+        postThumb,
+        createdPost,
       });
     } catch (error) {
       console.log(error);
