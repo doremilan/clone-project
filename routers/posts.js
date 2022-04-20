@@ -41,30 +41,31 @@ router.get("/posts", async (req, res) => {
 
     let userId;
     if (Token) {
-      const logInToken = Token.replace("Bearer", "");
+      const logInToken = Token.replace("Bearer", ""); //로그인 할때 생기는 토큰
       const token = jwt.verify(logInToken, myKey);
       userId = token.userId;
     }
-
+    //비회원 입장시 디폴트 값
     let likeCheck = false;
     let unlikeCheck = false;
     let subscribeCheck = false;
-    if (userId) {
+    if (userId) { //회원이 로그인했을경우
       const userLikedId = await Like.findOne({
-        postNum: Number(postNum),
+        postNum: Number(postNum), // 회원이 예전에 좋아요를 눌렀다면
         userId: userId,
       });
       const userUnlikedId = await Unlike.findOne({
-        postNum: Number(postNum),
+        postNum: Number(postNum), // 회원이 예전에 싫어요를 눌렀다면
         userId: userId,
       });
       const userSubId = await Subscribe.findOne({
-        userSub: post.userId,
+        userSub: post.userId, // 회원이 예전에 구독을 눌렀다면
         userId: userId,
       });
 
       if (userLikedId) {
         likeCheck = true;
+        console.log(userLikedId)
       }
       if (userUnlikedId) {
         unlikeCheck = true;
