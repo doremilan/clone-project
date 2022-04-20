@@ -10,29 +10,15 @@ router.post("/subscribe", authMiddleware, async (req, res) => {
     const { userId } = res.locals.user;
     const { userSub, subCheck } = req.body;
 
-    // if (subCheck) {
-    //   await User.updateOne(
-    //     { userId: userSub },
-    //     { $inc: { userSubscribe: -1 } }
-    //   );
-    //   await Subscribe.deleteOne({ userSub, userId });
-    //   console.log("1")
-    // } else {
-    //   await User.updateOne({ userId: userSub }, { $inc: { userSubscribe: 1 } });
-    //   await Subscribe.create({ userSub, userId });
-    //   console.log("2")
-    // }
     if (subCheck) {
-      await User.updateOne({ userId: userSub }, { $inc: { userSubscribe: 1 } });
-      await Subscribe.create({ userSub, userId });
-      console.log("1")
-    } else {
       await User.updateOne(
         { userId: userSub },
         { $inc: { userSubscribe: -1 } }
       );
       await Subscribe.deleteOne({ userSub, userId });
-      console.log("2")
+    } else {
+      await User.updateOne({ userId: userSub }, { $inc: { userSubscribe: 1 } });
+      await Subscribe.create({ userSub, userId });
     }
 
     res.status(200).json({ result: true });
