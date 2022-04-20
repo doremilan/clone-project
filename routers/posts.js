@@ -190,7 +190,10 @@ router.put(
           { postNum: Number(postNum) },
           { $set: { postTitle, postDesc, postThumb } }
         );
-        res.status(200).json({ result: true, msg: "수정 완료!!" });
+        res.status(200).json({ result: true,
+          postTitle,
+          postDesc,
+          postThumb, msg: "수정 완료!!" });
       }
     } catch (err) {
       console.log(err);
