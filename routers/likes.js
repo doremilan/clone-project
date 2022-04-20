@@ -10,7 +10,6 @@ router.post("/like", authMiddleware, async (req, res) => {
   try {
     const { postNum } = req.query;
     const { likeCheck, unlikeCheck } = req.body;
-    console.log("like",likeCheck, unlikeCheck)
     const { userId } = res.locals.user;
 
     if (likeCheck) {
@@ -39,7 +38,6 @@ router.post("/unlike", authMiddleware, async (req, res) => {
   try {
     const { postNum } = req.query;
     const { likeCheck, unlikeCheck } = req.body;
-    console.log("unlike",likeCheck, unlikeCheck)
     const { userId } = res.locals.user;
 
     if (unlikeCheck) {
