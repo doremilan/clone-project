@@ -123,7 +123,7 @@ router.post(
         });
       } else {
         const postNum = 1;
-        const [createdPost] = await Post.create({
+        const createdPost = await Post.create({
           postNum,
           postTitle,
           postDesc,
@@ -140,7 +140,6 @@ router.post(
         postDesc,
         postVideo,
         postThumb,
-        createdPost,
       });
     } catch (error) {
       console.log(error);
