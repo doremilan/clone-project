@@ -134,10 +134,7 @@ router.post(
         });
       }
       res.status(201).json({
-        postTitle,
-        postDesc,
-        postVideo,
-        postThumb,
+        createdPost
       });
     } catch (error) {
       console.log(error);
