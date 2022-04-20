@@ -9,6 +9,7 @@ router.post("/subscribe", authMiddleware, async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { userSub, subCheck } = req.body;
+    console.log(subCheck)
 
     if (subCheck) {
       await User.updateOne(
