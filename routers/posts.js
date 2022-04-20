@@ -134,11 +134,11 @@ router.post(
         });
       }
       res.status(201).json({
-        createdPost
+        result:true,createdPost
       });
     } catch (error) {
       console.log(error);
-      res.status(400).send({ result: false, msg: "등록 실패ㅠㅠ",createdPost });
+      res.status(400).send({ result: false, msg: "등록 실패ㅠㅠ"});
       console.log("posts.js 게시글 작성에서 에러남");
     }
   }
