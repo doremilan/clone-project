@@ -134,11 +134,7 @@ router.post(
         });
       }
       res.status(201).json({
-        result:true,
-        postTitle,
-        postDesc,
-        postVideo,
-        postThumb
+        postTitle,postDesc,postVideo,postThumb
       });
     } catch (error) {
       console.log(error);
