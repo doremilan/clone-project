@@ -133,7 +133,12 @@ router.post(
           userId,
         });
       }
-      res.status(201).send({ result: true, msg: "등록 완료!!" });
+      res.status(201).json({
+        postTitle,
+        postDesc,
+        postVideo,
+        postThumb,
+      });
     } catch (error) {
       console.log(error);
       res.status(400).send({ result: false, msg: "등록 실패ㅠㅠ" });
