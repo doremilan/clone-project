@@ -134,7 +134,7 @@ router.post(
         });
       }
       res.status(201).json({
-        result:true,createdPost
+        result:true
       });
     } catch (error) {
       console.log(error);
