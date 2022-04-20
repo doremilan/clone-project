@@ -133,13 +133,12 @@ router.post(
           userId,
         });
       }
-      console.log(createdPost)
       res.status(201).json({
         result:true,
         postTitle,
         postDesc,
         postVideo,
-        postThumb,
+        postThumb
       });
     } catch (error) {
       console.log(error);
