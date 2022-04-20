@@ -49,7 +49,8 @@ router.get("/posts", async (req, res) => {
     let likeCheck = false;
     let unlikeCheck = false;
     let subscribeCheck = false;
-    if (userId) { //회원이 로그인했을경우
+    if (userId) {
+      //회원이 로그인했을경우
       const userLikedId = await Like.findOne({
         postNum: Number(postNum), // 회원이 예전에 좋아요를 눌렀다면
         userId: userId,
@@ -100,10 +101,10 @@ router.post(
     try {
       const { userId } = res.locals.user;
       const { postTitle, postDesc } = req.body;
-      
+
       const postVideo = req.files.postVideo[0].location;
       const postThumb = req.files.postThumb[0].location;
-      
+
       const postDate = new Date();
 
       const postAmount = await Post.find();
@@ -169,25 +170,21 @@ router.delete("/posts", authMiddleware, async (req, res) => {
   }
 });
 
-//게시글 수정
+//게시글 수정 (이미지만 수정하는 것으로 변경)
 router.put(
   "/posts",
-  upload.fields([
-    { name: "postVideo", maxCount: 1 },
-    { name: "postThumb", maxCount: 1 },
-  ]),
+  upload.single("postThumb"),
   authMiddleware,
   async (req, res) => {
     try {
       const { postNum } = req.query;
       const { postTitle, postDesc } = req.body;
-      const postThumb = req.files.postThumb[0].location;
-      const postVideo = req.files.postVideo[0].location;
+      const postThumb = req.file.location;
       const existPost = await Post.find({ postNum: Number(postNum) });
       if (existPost) {
         await Post.updateOne(
           { postNum: Number(postNum) },
-          { $set: { postTitle, postDesc, postThumb, postVideo } }
+          { $set: { postTitle, postDesc, postThumb } }
         );
         res.status(200).json({ result: true, msg: "수정 완료!!" });
       }
