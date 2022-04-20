@@ -65,7 +65,6 @@ router.get("/posts", async (req, res) => {
 
       if (userLikedId) {
         likeCheck = true;
-        console.log(userLikedId)
       }
       if (userUnlikedId) {
         unlikeCheck = true;
