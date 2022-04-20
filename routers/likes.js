@@ -14,13 +14,13 @@ router.post("/like", authMiddleware, async (req, res) => {
     const { userId } = res.locals.user;
 
     if (likeCheck) {
-      await Post.updateOne({ postNum }, { $inc: { postLikeNum: 1 } });
+      await Post.updateOne({ postNum }, { $inc: { postLikeNum: -1 } });
       await Like.deleteOne({ postNum, userId });
     } else {
-      await Post.updateOne({ postNum }, { $inc: { postLikeNum: -1 } });
+      await Post.updateOne({ postNum }, { $inc: { postLikeNum: 1 } });
       await Like.create({ postNum, userId });
       if (unlikeCheck) {
-        await Post.updateOne({ postNum }, { $inc: { postUnlikeNum: 1 } });
+        await Post.updateOne({ postNum }, { $inc: { postUnlikeNum: -1 } });
         await Unlike.deleteOne({ postNum, userId });
       }
     }
