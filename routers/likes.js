@@ -54,7 +54,7 @@ router.post("/unlike", authMiddleware, async (req, res) => {
       }
     }
 
-    res.status(200).json({ result: true,postLikeNum,postUnlikeNum });
+    res.status(200).json({ result: true },{unlikeCheck},{likeCheck});
   } catch (error) {
     console.log(error);
     console.log("likes.js 싫어요에서 에러남");
