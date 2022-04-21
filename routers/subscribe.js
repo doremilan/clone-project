@@ -9,6 +9,7 @@ router.post("/subscribe", authMiddleware, async (req, res) => {
   try {
     const { userId } = res.locals.user;
     const { userSub, subCheck } = req.body;
+    // userSub는 Token 으로 하는게 좋다.
     console.log(subCheck)
 
     if (subCheck) {
@@ -22,7 +23,7 @@ router.post("/subscribe", authMiddleware, async (req, res) => {
       await Subscribe.create({ userSub, userId });
     }
 
-    res.status(200).json({ result: true });
+    res.status(200).json({ result: true },{subCheck});
   } catch (error) {
     console.log(error);
     console.log("subscribe.js 구독에서 에러남");
