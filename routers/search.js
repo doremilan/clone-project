@@ -12,7 +12,7 @@ router.get("/search", async (req, res) => {
   try {
     const { keyword } = req.query;
 
-    let posts = await Post.find({ postTitle: { $regex: keyword } }).sort({
+    let posts = await Post.find({ postTitle: { $regex: keyword,$options:"i" } }).sort({
       postDate: -1,
     });
 
