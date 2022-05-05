@@ -48,6 +48,10 @@ app.use("/api", [
 ]);
 app.use("/user", [userRouter]);
 
+app.get("/.well-known/pki-validation/3E8040004D63B5806FC90DA247FE5C22.txt",(req,res)=> {
+  res.sendFile(__dirname + "/well-known/pki-validation/3E8040004D63B5806FC90DA247FE5C22.txt")
+})
+
 // 서버 열기
 app.listen(port, () => {
   console.log(port, "포트로 서버가 켜졌어요!");
